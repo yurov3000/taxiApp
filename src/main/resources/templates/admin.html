@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Taxi Service</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+<header>
+    <h1>BombillaDrivers</h1>
+    <div class="stats">
+<!--        <span>Поездок за всё время: <b th:text="${tripCount}">0</b></span> |-->
+<!--        <span>Средний чек: <b th:text="${avgPrice}">0</b> ₽</span>-->
+        <span><h2>taxi service</h2></span>
+    </div>
+</header>
+<nav class="main-nav">
+    <a th:href="@{/admin}" th:if="${session.userRole == 'ADMIN'}">Админ-панель</a>
+    <a th:href="@{/profile}" th:if="${session.userId != null}">Мой профиль</a>
+    <a th:href="@{/login}" th:if="${session.userRole == null}">Войти</a>
+    <a th:href="@{/register}" th:if="${session.userRole == null}">Регистрация</a>
+    <a th:href="@{/logout}" th:if="${session.userId != null}" class="logout-link">Выйти</a>
+</nav>
+
+<main>
+    <section>
+        <h3>Панель администратора</h3>
+    </section>
+    <section>
+        <h2>Добавить пассажира</h2>
+        <form action="/passengers" method="post">
+            <input type="text" name="name" placeholder="Имя" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="text" name="phone" placeholder="Телефон" required>
+            <button type="submit">Создать</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Добавить водителя</h2>
+        <form action="/drivers" method="post">
+            <input type="text" name="name" placeholder="Имя" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="text" name="phone" placeholder="Телефон" required>
+            <input type="text" name="license" placeholder="Номер прав" required>
+            <button type="submit">Создать (статус: AVAILABLE)</button>
+        </form>
+    </section>
+
+<!--    <section>-->
+<!--        <h2>Создать поездку</h2>-->
+<!--        <form action="/trips" method="post">-->
+<!--            <select name="passengerId" required>-->
+<!--                <option value="">Выберите пассажира</option>-->
+<!--                <option th:each="p : ${passengers}" th:value="${p.id}"-->
+<!--                        th:text="${p.name + ' (ID:' + p.id + ')'}"></option>-->
+<!--            </select>-->
+<!--            <input type="text" name="origin" placeholder="Откуда" required>-->
+<!--            <input type="text" name="destination" placeholder="Куда" required>-->
+<!--            <input type="number" step="0.1" name="distance" placeholder="Расстояние (км)" required>-->
+<!--            <button type="submit">Найти водителя</button>-->
+<!--        </form>-->
+<!--    </section>-->
+
+    <section>
+        <h2>История поездок</h2>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Пассажир</th>
+                <th>Водитель</th>
+                <th>Статус</th>
+                <th>Цена</th>
+                <th>Действие</th>
+            </tr>
+            <tr th:each="t : ${trips}">
+                <td th:text="${t.id}"></td>
+                <td th:text="${t.passengerId}"></td>
+                <td th:text="${t.driverId}"></td>
+                <td th:text="${t.status}"></td>
+                <td th:text="${t.price} + ' ₽'"></td>
+                <td>
+                    <form th:if="${t.status != null and t.status.name() == 'ASSIGNED'}"
+                          th:action="@{/trips/{id}/complete(id=${t.id})}"
+                          method="post" style="margin:0">
+                        <button type="submit" style="background:#e74c3c;">Завершить</button>
+                    </form>
+                    <span th:if="${t.status != null and t.status.name() != 'ASSIGNED'}"
+                          style="color:#7f8c8d; font-size:0.9em;">
+                            Завершена
+                        </span>
+                </td>
+            </tr>
+        </table>
+    </section>
+</main>
+</body>
+</html>

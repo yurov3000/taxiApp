@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Профиль</title><link rel="stylesheet" th:href="@{/style.css}"></head>
+<body>
+<header>
+    <h1>Профиль: <span th:text="${userName}"></span></h1>
+    <div>
+        <span th:text="${userType == 'PASSENGER' ? 'Пассажир' : 'Водитель'}"></span> |
+        <a href="/logout">Выйти</a> | <a href="/">Главная</a>
+    </div>
+</header>
+<nav class="main-nav">
+    <a th:href="@{/profile}" th:if="${session.userId != null}">Мой профиль</a>
+    <a th:href="@{/login}" th:if="${session.userRole == null}">Войти</a>
+    <a th:href="@{/register}" th:if="${session.userRole == null}">Регистрация</a>
+    <a th:href="@{/logout}" th:if="${session.userId != null}" class="logout-link">Выйти</a>
+</nav>
+<section th:if="${userType == 'PASSENGER'}" style="background:#e8f6f3; border-left:4px solid #27ae60; padding:15px; margin-bottom:15px;">
+    <h2>Быстрый заказ</h2>
+    <form th:action="@{/trips}" method="post" style="display:flex; gap:10px; flex-wrap:wrap;">
+        <input type="text" name="origin" placeholder="Откуда" required>
+        <input type="text" name="destination" placeholder="Куда" required>
+        <input type="number" step="0.1" name="distance" placeholder="Расстояние (км)" required>
+        <button type="submit" style="background:#27ae60; border:none; padding:10px 20px; border-radius:4px; color:white; cursor:pointer;">Найти водителя</button>
+    </form>
+</section>
+
+<section>
+    <h2>Мои поездки</h2>
+    <table>
+        <tr><th>ID</th><th>Маршрут</th><th>Статус</th><th>Цена</th><th>Действие</th></tr>
+        <tr th:each="t : ${trips}">
+            <td th:text="${t.id}"></td>
+            <td th:text="${t.origin} + ' → ' + ${t.destination}"></td>
+            <td th:text="${t.status}"></td>
+            <td th:text="${t.price} + ' ₽'"></td>
+            <td>
+                <!-- Показываем кнопку ТОЛЬКО если поездка не завершена и не отменена -->
+                <form th:if="${t.status != null and t.status.name() != 'COMPLETED' and t.status.name() != 'CANCELLED'}"
+                      th:action="@{/trips/{id}/cancel(id=${t.id})}" method="post" style="margin:0">
+                    <button type="submit" style="background:#e74c3c; border:none; padding:6px 12px; border-radius:4px; color:white; cursor:pointer;">Отменить</button>
+                </form>
+                <!-- Статус вместо кнопки -->
+                <span th:if="${t.status == null or (t.status.name() == 'COMPLETED' or t.status.name() == 'CANCELLED')}"
+                      style="color:#7f8c8d; font-size:0.9em;">
+                        <span th:text="${t.status?.name() == 'CANCELLED' ? 'Отменена' : 'Завершена'}"></span>
+                    </span>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(trips)}"><td colspan="5" style="text-align:center; padding:10px;">Поездок пока нет</td></tr>
+    </table>
+</section>
+</body>
+</html>

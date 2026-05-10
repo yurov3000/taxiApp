@@ -1,0 +1,14 @@
+body { font-family: system-ui, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background: #F5F5F5; color: #333; }
+header { background: #093C5D; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+section { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+form { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+input, select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; flex: 1; min-width: 120px; }
+button { background: #27ae60; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+button:hover { background: #219150; }
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+th { background: #6FD1D7; }
+.main-nav { background: #093C5D; padding: 12px; display: flex; gap: 15px; border-radius: 6px; margin-bottom: 20px; }
+.main-nav a { color: #ecf0f1; text-decoration: none; font-weight: 500; }
+.main-nav a:hover { color: #3498db; }
+.logout-link { color: #e74c3c !important; }
