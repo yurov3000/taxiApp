@@ -2,16 +2,19 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head><title>Регистрация</title><link rel="stylesheet" th:href="@{/style.css}"></head>
 <body>
-<header><h1>Регистрация</h1></header>
+<header><h1>📝 Регистрация</h1></header>
 <section>
-    <form action="/register" method="post">
-        <select name="role" required><option value="PASSENGER">Пассажир</option><option value="DRIVER">Водитель</option></select>
+    <form action="/register" method="post" style="display:flex; flex-direction:column; gap:10px; max-width:300px;">
+        <select name="role" required>
+            <option value="PASSENGER">Пассажир</option>
+            <option value="DRIVER">Водитель</option>
+        </select>
         <input type="text" name="name" placeholder="Имя" required>
-        <input type="email" name="email" placeholder="Email" required>
+        <input type="text" name="email" placeholder="Email" required>
         <input type="text" name="phone" placeholder="Телефон" required>
         <input type="password" name="password" placeholder="Пароль" required>
-        <input type="text" name="license" placeholder="Номер прав (для водителей)">
-        <button type="submit">Зарегистрироваться</button>
+        <input type="text" name="license" placeholder="Номер прав (только для водителей)">
+        <button type="submit">Создать аккаунт</button>
     </form>
     <p>Уже есть аккаунт? <a href="/login">Войти</a></p>
 </section>

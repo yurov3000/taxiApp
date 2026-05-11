@@ -28,18 +28,15 @@ public class TripService {
 
     @Transactional
     public Trip createTrip(Long passengerId, String origin, String destination, Double distance) {
-        // 1. Проверка пассажира
         passengerRepo.findById(passengerId)
                 .orElseThrow(() -> new RuntimeException("Passenger not found"));
 
-        // 2. Поиск свободного водителя (атомарно благодаря @Lock + @Transactional)
         Driver driver = driverRepo.findFirstByStatus(DriverStatus.AVAILABLE)
                 .orElseThrow(() -> new RuntimeException("No available drivers"));
 
         driver.setStatus(DriverStatus.BUSY);
         driverRepo.save(driver);
 
-        // 3. Создание поездки
         Trip trip = new Trip();
         trip.setPassengerId(passengerId);
         trip.setDriverId(driver.getId());
@@ -49,7 +46,6 @@ public class TripService {
         trip.setStatus(TripStatus.ASSIGNED);
         trip = tripRepo.save(trip);
 
-        // 4. Создание уведомлений
         createNotif(trip.getId(), "DRIVER", driver.getId(), "Новая поездка: " + origin + " -> " + destination);
         createNotif(trip.getId(), "PASSENGER", passengerId, "Водитель найден. Ожидание.");
 
@@ -75,8 +71,8 @@ public class TripService {
             driver.setStatus(DriverStatus.AVAILABLE);
             driverRepo.save(driver);
         }
-        createNotif(tripId, "PASSENGER", trip.getPassengerId(), "Поездка отменена.");
-        if (trip.getDriverId() != null) createNotif(tripId, "DRIVER", trip.getDriverId(), "Поездка отменена.");
+        createNotif(tripId, "PASSENGER", trip.getPassengerId(), "Поездка завершена. Спасибо!");
+        if (trip.getDriverId() != null) createNotif(tripId, "DRIVER", trip.getDriverId(), "Поездка завершена. Вы снова свободны.");
     }
 
     @Transactional
@@ -88,17 +84,14 @@ public class TripService {
             throw new RuntimeException("Поездку можно завершить только из статуса ASSIGNED");
         }
 
-        // 1. Завершаем поездку
         trip.setStatus(TripStatus.COMPLETED);
         tripRepo.save(trip);
 
-        // 2. Освобождаем водителя
         Driver driver = driverRepo.findById(trip.getDriverId())
                 .orElseThrow(() -> new RuntimeException("Водитель не найден"));
         driver.setStatus(DriverStatus.AVAILABLE);
         driverRepo.save(driver);
 
-        // 3. Уведомления
         createNotif(tripId, "PASSENGER", trip.getPassengerId(), "Поездка завершена. Спасибо!");
         createNotif(tripId, "DRIVER", driver.getId(), "Поездка завершена. Вы снова свободны.");
     }

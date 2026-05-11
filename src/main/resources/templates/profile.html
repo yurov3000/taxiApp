@@ -15,6 +15,14 @@
     <a th:href="@{/register}" th:if="${session.userRole == null}">Регистрация</a>
     <a th:href="@{/logout}" th:if="${session.userId != null}" class="logout-link">Выйти</a>
 </nav>
+<section>
+    <div>
+        <span>Поездок за всё время: <b th:text="${tripCount}">0</b></span>
+        <span>Средний чек: <b th:text="${avgPrice}">0</b> ₽</span>
+    </div>
+</section>
+
+
 <section th:if="${userType == 'PASSENGER'}" style="background:#e8f6f3; border-left:4px solid #27ae60; padding:15px; margin-bottom:15px;">
     <h2>Быстрый заказ</h2>
     <form th:action="@{/trips}" method="post" style="display:flex; gap:10px; flex-wrap:wrap;">
