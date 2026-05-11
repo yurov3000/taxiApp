@@ -82,9 +82,20 @@ public class AuthProfileController {
 
         List<Trip> myTrips = "PASSENGER".equals(userType) ?
                 tripRepo.findByPassengerId(userId) : tripRepo.findByDriverId(userId);
+
+        long userTripCount = myTrips.size();
+
+        double avgPrice = myTrips.stream()
+                .mapToDouble(t -> t.getPrice() != null ? t.getPrice() : 0)
+                .average()
+                .orElse(0);
+
         model.addAttribute("userType", userType);
         model.addAttribute("userName", session.getAttribute("userName"));
         model.addAttribute("trips", myTrips);
+
+        model.addAttribute("tripCount", userTripCount);
+        model.addAttribute("avgPrice", String.format("%.2f", avgPrice));
         return "profile";
     }
 
