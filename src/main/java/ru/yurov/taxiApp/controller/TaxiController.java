@@ -67,6 +67,7 @@ public class TaxiController {
         return "redirect:/";
     }
 
+    // 2. Добавляем создание поездки из профиля (берёт ID пассажира из сессии)
     @PostMapping("/trips")
     public String createTripFromProfile(@RequestParam String origin, @RequestParam String destination,
                                         @RequestParam Double distance, HttpSession session) {
@@ -78,7 +79,7 @@ public class TaxiController {
         try {
             tripService.createTrip(userId, origin, destination, distance);
         } catch (RuntimeException e) {
-            System.out.println("Ошибка заказа: " + e.getMessage());
+            System.out.println("⚠️ Ошибка заказа: " + e.getMessage());
         }
         return "redirect:/profile";
     }

@@ -1,29 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Вход в сервис</title>
-    <link rel="stylesheet" th:href="@{/style.css}">
-</head>
+<head><title>Вход</title><link rel="stylesheet" th:href="@{/style.css}"></head>
 <body>
-<header><h1>Вход</h1></header>
+<header><h1>Вход в систему</h1></header>
 <section>
     <p th:if="${param.error}" style="color:red">Неверный email, пароль или роль</p>
-
-    <form action="/login" method="post" style="display:flex; flex-direction:column; gap:10px; max-width:300px;">
-        <select name="role" required>
-            <option value="PASSENGER">Пассажир</option>
-            <option value="DRIVER">Водитель</option>
-        </select>
-        <input type="text" name="email" placeholder="Email или admin" required>
+    <form action="/login" method="post">
+        <select name="role" required><option value="PASSENGER">Пассажир</option><option value="DRIVER">Водитель</option></select>
+        <input type="text" name="email" placeholder="Email" required>
         <input type="password" name="password" placeholder="Пароль" required>
         <button type="submit">Войти</button>
     </form>
-
-    <p style="margin-top:15px;">Нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
-    <p style="color:#7f8c8d; font-size:0.9em; margin-top:10px;">
-        <b>Вход как админ:</b> введите <code>admin</code> в поле Email, пароль любой, роль любая.
-    </p>
+    <p>Нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
+    <p style="color:#7f8c8d; font-size:0.9em;">Для входа как админ: email <code>admin</code>, пароль любой.</p>
 </section>
 </body>
 </html>
