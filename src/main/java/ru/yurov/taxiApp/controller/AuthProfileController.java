@@ -108,4 +108,23 @@ public class AuthProfileController {
         } catch (Exception e) { /* игнорируем для демо */ }
         return "redirect:/profile";
     }
+
+    @PostMapping("/trips/{id}/rate")
+    public String rateTrip(@PathVariable Long id,
+                           @RequestParam Integer rating,
+                           HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        String userType = (String) session.getAttribute("userType");
+
+        if (userId == null || !"PASSENGER".equals(userType)) {
+            return "redirect:/login";
+        }
+
+        try {
+            tripService.rateTrip(id, userId, rating);
+        } catch (RuntimeException e) {
+            System.out.println("Ошибка оценки: " + e.getMessage());
+        }
+        return "redirect:/profile";
+    }
 }

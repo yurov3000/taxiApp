@@ -32,26 +32,44 @@
 <section>
     <h2>Мои поездки</h2>
     <table>
-        <tr><th>ID</th><th>Маршрут</th><th>Статус</th><th>Цена</th><th>Действие</th></tr>
+        <tr><th>ID</th><th>Маршрут</th><th>Статус</th><th>Цена</th><th>Оценка</th><th>Действие</th></tr>
         <tr th:each="t : ${trips}">
             <td th:text="${t.id}"></td>
             <td th:text="${t.origin} + ' → ' + ${t.destination}"></td>
             <td th:text="${t.status}"></td>
             <td th:text="${t.price} + ' ₽'"></td>
+
+            <!-- Колонка оценки -->
             <td>
-                <!-- Показываем кнопку ТОЛЬКО если поездка не завершена и не отменена -->
-                <form th:if="${t.status != null and t.status.name() != 'COMPLETED' and t.status.name() != 'CANCELLED'}"
-                      th:action="@{/trips/{id}/cancel(id=${t.id})}" method="post" style="margin:0">
-                    <button type="submit" style="background:#e74c3c; border:none; padding:6px 12px; border-radius:4px; color:white; cursor:pointer;">Отменить</button>
+                <span th:if="${t.rating != null}" style="color:#f39c12; font-weight:bold;">
+                    <span th:text="${t.rating} "></span>
+                </span>
+                <span th:if="${t.rating == null}" style="color:#95a5a6;">—</span>
+            </td>
+
+            <td>
+                <form th:if="${userType == 'PASSENGER' and t.status != null and t.status.name() == 'COMPLETED' and t.rating == null}"
+                      th:action="@{/trips/{id}/rate(id=${t.id})}" method="post" style="margin:0; display:flex; gap:4px; align-items:center;">
+                    <label th:each="i : ${#numbers.sequence(1,5)}" style="cursor:pointer; font-size:1.1em;">
+                        <input type="radio" name="rating" th:value="${i}" required style="display:none;">
+                        <span th:text="${i}"></span>
+                    </label>
+                    <button type="submit" style="background:#3498db; border:none; padding:4px 10px; border-radius:3px; color:white; cursor:pointer; font-size:0.9em;">OK</button>
                 </form>
-                <!-- Статус вместо кнопки -->
+
+                <form th:if="${t.status != null and t.status.name() != 'COMPLETED' and t.status.name() != 'CANCELLED'}"
+                      th:action="@{/trips/{id}/cancel(id=${t.id})}" method="post" style="margin:0; display:inline;">
+                    <button type="submit" style="background:#e74c3c; border:none; padding:4px 10px; border-radius:3px; color:white; cursor:pointer; font-size:0.9em;">❌ Отменить</button>
+                </form>
+
                 <span th:if="${t.status == null or (t.status.name() == 'COMPLETED' or t.status.name() == 'CANCELLED')}"
                       style="color:#7f8c8d; font-size:0.9em;">
-                        <span th:text="${t.status?.name() == 'CANCELLED' ? 'Отменена' : 'Завершена'}"></span>
-                    </span>
+                    <span th:if="${t.status?.name() == 'CANCELLED'}">Отменена</span>
+                    <span th:if="${t.status?.name() == 'COMPLETED'}">Завершена</span>
+                </span>
             </td>
         </tr>
-        <tr th:if="${#lists.isEmpty(trips)}"><td colspan="5" style="text-align:center; padding:10px;">Поездок пока нет</td></tr>
+        <tr th:if="${#lists.isEmpty(trips)}"><td colspan="6" style="text-align:center; padding:10px;">Поездок пока нет</td></tr>
     </table>
 </section>
 </body>
